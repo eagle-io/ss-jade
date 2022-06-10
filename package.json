@@ -5,6 +5,7 @@
     "email": "owen@socketstream.org"
   },
   "description": "Jade wrapper for SocketStream 0.3",
+  "license": "MIT",
   "version": "1.0.0",
   "main": "./wrapper.js",
   "repository": {
