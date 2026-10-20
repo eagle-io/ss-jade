@@ -5,7 +5,8 @@
 
 var fs = require('fs'),
     path = require('path'),
-    jade = require('pug');
+    jade = require('pug'),
+    prepareJadeSource = require('./jade_compat').prepareJadeSource;
 
 var jadePlugin = {
   resolve: function (filename, source) {
@@ -15,21 +16,12 @@ var jadePlugin = {
     return path.join(path.dirname(source), target);
   },
   read: function (filename) {
-    return keepMustacheLines(fs.readFileSync(filename, 'utf8'));
+    return prepareJadeSource(fs.readFileSync(filename, 'utf8'));
   }
 };
 
-// Jade treated a line of mustache as text. Pug rejects a line that starts with {{.
-function keepMustacheLines (input) {
-  return String(input).split('\n').map(function (line) {
-    var match = /^(\s*)(\{\{.*)$/.exec(line);
-    if (!match) return line;
-    return match[1] + '| ' + match[2];
-  }).join('\n');
-}
-
 function compileJade (input, filename) {
-  return jade.compile(keepMustacheLines(input), { filename: filename, plugins: [jadePlugin] });
+  return jade.compile(prepareJadeSource(input), { filename: filename, plugins: [jadePlugin] });
 }
 
 exports.init = function(root, config) {
