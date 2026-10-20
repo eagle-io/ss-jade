@@ -38,9 +38,16 @@ function rewriteInsideAttributes (line, depth) {
   return { line: out, depth: depth }
 }
 
+function restoreJadeDoctype (line) {
+  var match = /^(\s*)doctype\s+5\s*$/.exec(line)
+  if (!match) return line
+  return match[1] + 'doctype html'
+}
+
 function prepareJadeSource (input) {
   var depth = 0
   return String(input).split('\n').map(function (line) {
+    line = restoreJadeDoctype(line)
     var mustache = /^(\s*)(\{\{.*)$/.exec(line)
     if (mustache) line = mustache[1] + '| ' + mustache[2]
     var rewritten = rewriteInsideAttributes(line, depth)
