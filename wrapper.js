@@ -16,8 +16,17 @@ var jadePlugin = {
   }
 };
 
+// Jade treated a line of mustache as text. Pug rejects a line that starts with {{.
+function keepMustacheLines (input) {
+  return String(input).split('\n').map(function (line) {
+    var match = /^(\s*)(\{\{.*)$/.exec(line);
+    if (!match) return line;
+    return match[1] + '| ' + match[2];
+  }).join('\n');
+}
+
 function compileJade (input, filename) {
-  return jade.compile(input, { filename: filename, plugins: [jadePlugin] });
+  return jade.compile(keepMustacheLines(input), { filename: filename, plugins: [jadePlugin] });
 }
 
 exports.init = function(root, config) {
