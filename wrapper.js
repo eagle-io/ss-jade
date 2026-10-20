@@ -13,6 +13,9 @@ var jadePlugin = {
     var target = String(filename).trim();
     if (target.slice(-4) === '.pug') target = target.slice(0, -4) + '.jade';
     return path.join(path.dirname(source), target);
+  },
+  read: function (filename) {
+    return keepMustacheLines(fs.readFileSync(filename, 'utf8'));
   }
 };
 
