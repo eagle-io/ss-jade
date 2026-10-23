@@ -13,7 +13,6 @@ function jadeQuotedValue (body) {
   }
   if (last < body.length) chunks.push(JSON.stringify(body.slice(last)))
   if (!chunks.length) return '""'
-  if (chunks.length === 1 && chunks[0].charAt(0) === '(') return chunks[0].slice(1, -1)
   return '"" + ' + chunks.join(' + ')
 }
 

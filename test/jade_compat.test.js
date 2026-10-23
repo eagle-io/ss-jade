@@ -34,7 +34,16 @@ test('keeps the shipped setup-profile URL concatenation', function () {
   );
 });
 
-test('keeps single-expression attribute preparation unchanged', function () {
-  assert.equal(prepareJadeSource('input(value="#{value}")'), 'input(value=value)');
+test('string-coerces single-expression attributes', function () {
+  assert.equal(prepareJadeSource('input(value="#{value}")'), 'input(value="" + (value))');
   assert.equal(render('input(value="#{value}")', { value: 0 }), '<input value="0"/>');
 });
+
+for (const [value, expected] of [
+  [0, '0'], [true, 'true'], [false, 'false'], [null, 'null'], [undefined, 'undefined'],
+  ['<b>"&', '&lt;b&gt;&quot;&amp;']
+]) {
+  test('preserves Jade single-attribute output for ' + String(value), function () {
+    assert.equal(render('input(value="#{value}")', { value }), '<input value="' + expected + '"/>');
+  });
+}
